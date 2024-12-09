@@ -7,6 +7,7 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -125,13 +126,20 @@ app.get('/dashboard-admin',verificarLogin,verificarAdministrador,async (req, res
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
         </head>
         <body>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <div class="container">
-                    <a class="navbar-brand" href="/">Sistema de Avaliação</a>
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                
+                <img fetchpriority="high" decoding="async" width="100px" height="40px"
+                src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
+                class="attachment-full size-full wp-image-6626" 
+                alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
+                https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
+            </a>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="/criar-campanha">Criar Campanha</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/perguntas">Perguntas</a></li>
+                            <li class="nav-item "><a class="nav-link text-white" href="/criar-campanha ">Criar Campanha</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
                         </ul>
                     </div>
                     <div class="d-flex">
