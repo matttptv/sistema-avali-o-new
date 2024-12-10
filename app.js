@@ -117,50 +117,125 @@ app.post('/login', async (req, res) => {
 app.get('/dashboard-admin',verificarLogin,verificarAdministrador,async (req, res) => {
     const campanhas = await carregarCampanhas();
     res.send(`
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Sistema de Avaliação</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-        </head>
-        <body>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <div class="container">
-                    <a class="navbar-brand d-flex align-items-center" href="/">
-                
-                <img fetchpriority="high" decoding="async" width="100px" height="40px"
-                src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
-                class="attachment-full size-full wp-image-6626" 
-                alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
-                https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
-            </a>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav">
-                            <li class="nav-item "><a class="nav-link text-white" href="/criar-campanha ">Criar Campanha</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
-                        </ul>
-                    </div>
-                    <div class="d-flex">
-                        <a href="/logout" class="btn btn-danger">Logout</a>
-                    </div>
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sistema de Avaliação</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                background-color: #f8f9fa;
+                color: #343a40;
+                font-family: Arial, sans-serif;
+            }
+            nav {
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            .container {
+                text-align: center;
+            }
+            h1 {
+                margin-top: 20px;
+                color: #007bff;
+                font-weight: bold;
+            }
+            h3 {
+                margin-bottom: 20px;
+                color: #495057;
+            }
+            .list-group-item {
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                background-color: #fff;
+                box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+            }
+            .btn-danger:hover {
+                background-color: #a71d2a;
+                border-color: #891122;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img fetchpriority="high" decoding="async" width="100px" height="40px"
+                    src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
+                    class="attachment-full size-full wp-image-6626" 
+                    alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
+                    https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link text-white" href="/criar-campanha">Criar Campanha</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
+                    </ul>
                 </div>
-            </nav>
-            <div class="container mt-4">
-                <h1>Bem-vindo ao Sistema de Avaliação</h1>
-                <h3>Campanhas Criadas:</h3>
-                <ul class="list-group">
-                    ${campanhas.map(c => `
-                        <li class="list-group-item">
-                            <strong>${c.titulo}</strong>: ${c.descricao}<br>
-                            <a href="/enviar-avaliacao/${c.id}" class="btn btn-primary mt-2">Enviar Avaliação</a>
-                        </li>`).join('')}
-                </ul>
+                <div class="d-flex">
+                    <a href="/logout" class="btn btn-danger">Sair</a>
+                </div>
             </div>
-        </body>
-        </html>
+        </nav>
+        <div class="container mt-4">
+            <h1>Bem-vindo ao Sistema de Avaliação</h1>
+            <h3>Campanhas Criadas:</h3>
+            <ul class="list-group mx-auto" style="max-width: 600px;">
+                ${campanhas.map(c => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${c.titulo}</strong><br>
+                            <span>${c.descricao}</span>
+                        </div>
+                        <div>
+                            <a href="/enviar-avaliacao/${c.id}" class="btn btn-primary btn-sm">Enviar</a>
+                            <form action="/excluir-campanha" method="POST" style="display: inline;">
+                                <input type="hidden" name="id" value="${c.id}" />
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </div>
+                    </li>`).join('')}
+            </ul>
+        </div>
+    </body>
+    </html>
     `);
+});
+
+async function excluirCampanhaDoBanco(id) {
+    try {
+        await client.query('DELETE FROM campanhas WHERE id = $1', [id]);
+        console.log(`Campanha com ID ${id} foi excluída.`);
+    } catch (error) {
+        console.error('Erro ao excluir campanha do banco:', error);
+        throw error;
+    }
+}
+
+app.post('/excluir-campanha', verificarLogin, verificarAdministrador, async (req, res) => {
+    const id = req.body.id;
+
+    try {
+        await excluirCampanhaDoBanco(id);
+        res.redirect('/dashboard-admin'); // Redireciona para o dashboard
+    } catch (error) {
+        console.error("Erro ao excluir campanha:", error);
+        res.status(500).send("Erro ao excluir a campanha.");
+    }
 });
 
 // Página de Login para Usuários (GET)
@@ -296,6 +371,26 @@ async function carregarCampanhas() {
 app.get('/criar-campanha', verificarLogin, verificarAdministrador, (req, res) => {
     res.send(`
         <html>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img fetchpriority="high" decoding="async" width="100px" height="40px"
+                    src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
+                    class="attachment-full size-full wp-image-6626" 
+                    alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
+                    https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item "><a class="nav-link text-white" href="/criar-campanha ">Criar Campanha</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex">
+                    <a href="/logout" class="btn btn-danger">Sair</a>
+                </div>
+            </div>
+        </nav>
         <head>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
         </head>
@@ -336,6 +431,26 @@ app.get('/perguntas', verificarAdministrador,async (req, res) => {
 
     res.send(
         `<html>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img fetchpriority="high" decoding="async" width="100px" height="40px"
+                    src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
+                    class="attachment-full size-full wp-image-6626" 
+                    alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
+                    https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item "><a class="nav-link text-white" href="/criar-campanha ">Criar Campanha</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex">
+                    <a href="/logout" class="btn btn-danger">Sair</a>
+                </div>
+            </div>
+        </nav>
         <head>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
         </head>
@@ -406,6 +521,26 @@ app.get('/enviar-avaliacao/:campanhaId', verificarAdministrador, async (req, res
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img fetchpriority="high" decoding="async" width="100px" height="40px"
+                    src="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp" 
+                    class="attachment-full size-full wp-image-6626" 
+                    alt srcset="https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1.webp 768w, 
+                    https://input.com.vc/wp-content/uploads/2024/08/LogoInput-768x314-1-300x123.webp 300w" sizes="(max-width: 768px) 100vw, 768px">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item "><a class="nav-link text-white" href="/criar-campanha ">Criar Campanha</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="/perguntas">Perguntas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex">
+                    <a href="/logout" class="btn btn-danger">Sair</a>
+                </div>
+            </div>
+        </nav>
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
